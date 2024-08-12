@@ -40,12 +40,12 @@ def delete_domain(network_name: str, domain: str):
         return 404
     return requests.delete(f"{url}/networks/{network_id}/domains/{domain_id}", headers=headers).status_code
 
-def get_backend_id(network_name: str, name: str):
+def get_backend_id(network_name: str, backend_name: str):
     network_id = get_network_id(network_name)
     data = json.loads(requests.get(f"{url}/networks/{network_id}/backendSets", headers=headers).text)
     backend_id = None
     for i in data:
-        if i["name"] == name:
+        if i["name"] == backend_name:
             backend_id = i["id"]
     return backend_id
 
@@ -54,4 +54,10 @@ def create_domain(network_name: str, domain: str, backend_name: str):
     backend_id = get_backend_id(network_name, backend_name)
     data = {"name": domain, "backend_set_id": backend_id, "bac": False}
     response = requests.post(f"{url}/networks/{network_id}/domains", headers=headers, json=data)
+    return response.status_code
+
+def delete_backend(network_name: str, backend_name: str):
+    network_id = get_network_id(network_name)
+    backend_id = get_backend_id(network_name, backend_name)
+    response = requests.delete(f"{url}/networks/{network_id}/backendSets/{backend_id}", headers=headers)
     return response.status_code
