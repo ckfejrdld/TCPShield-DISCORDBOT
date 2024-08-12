@@ -127,6 +127,16 @@ async def on_message(message):
                     await message.reply("등록이 불가능한 백엔드입니다. 고유 이름 중복/블랙리스트 이름 등과 같은 사유가 있을 수 있습니다.")
                     return
                 else:
+                    con = connect_db()
+                    cur = con.cursor()
+                    cur.execute("SELECT COUNT(hostname) FROM `backend` WHERE owner = ?", (message.author.id,))
+                    count_data = cur.fetchone()
+                    con.close()
+                    for i in count_data:
+                        count = int(i)
+                    if count >= config.maximum_backend_count:
+                        await message.reply("백엔드 서버 등록 가능 최대 한도를 초과하셨습니다.")
+                        return
                     if split[6] not in ["on", "off"]:
                         await message.reply("Proxy Protocol 여부는 on/off 중으로 작성해주세요.")
                         return
