@@ -186,13 +186,17 @@ async def on_message(message):
             elif split[2] == "목록":
                 con = connect_db()
                 cur = con.cursor()
-                cur.execute("SELECT name,hostname,port FROM `backend` WHERE owner = ?", (message.author.id,))
+                cur.execute("SELECT name,hostname,port,proxy_protocol FROM `backend` WHERE owner = ?", (message.author.id,))
                 data = cur.fetchall()
                 con.close()
                 embed = discord.Embed(title="백엔드 서버 목록", description="nPerm Proxy에 등록된 백엔드 서버 목록을 확인합니다.", color=0x62c1cc)
                 for i in data:
-                    name, hostname, port = i
-                    embed.add_field(name=name, value=f"{hostname}:{port}", inline=False)
+                    name, hostname, port, proxyprotocol_status = i
+                    if proxyprotocol_status == 0:
+                        proxy_protocol = "off"
+                    if proxyprotocol_status == 1:
+                        proxy_protocol = "on"
+                    embed.add_field(name=name, value=f"{hostname}:{port} - Proxy Protocol: {proxy_protocol}", inline=False)
                 await message.reply(embed=embed)
 
 client.run(config.bot_token)
