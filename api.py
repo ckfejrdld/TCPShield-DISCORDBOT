@@ -61,3 +61,9 @@ def delete_backend(network_name: str, backend_name: str):
     backend_id = get_backend_id(network_name, backend_name)
     response = requests.delete(f"{url}/networks/{network_id}/backendSets/{backend_id}", headers=headers)
     return response.status_code
+
+def create_backend(network_name: str, backend_name: str, hostname: str, port: int, proxyprotocol: bool):
+    network_id = get_network_id(network_name)
+    body = {"name": backend_name, "backends": [f'{hostname}:{port}'], "proxy_protocol": proxyprotocol, "vulcan_ac_enabled": False, "load_balancing_mode": 0}
+    response = requests.post(f"{url}/networks/{network_id}/backendSets", headers=headers, json=body)
+    return response.status_code
