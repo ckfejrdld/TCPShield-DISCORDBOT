@@ -3,6 +3,7 @@ import sqlite3
 import config
 import api
 import asyncio
+import datetime
 
 client = discord.Client(intents=discord.Intents.all())
 
@@ -12,14 +13,16 @@ def create_table():
     cur.execute("""CREATE TABLE IF NOT EXISTS proxy (
         "domain"	TEXT NOT NULL,
         "backend"	TEXT NOT NULL,
-        "owner"	TEXT NOT NULL
+        "owner"	TEXT NOT NULL,
+        "created_at" TEXT
     );""")
     cur.execute("""CREATE TABLE IF NOT EXISTS backend (
         "name"	TEXT NOT NULL,
         "hostname"	TEXT NOT NULL,
         "port"	INTEGER NOT NULL,
         "proxy_protocol"	INTEGER NOT NULL,
-        "owner"	TEXT NOT NULL
+        "owner"	TEXT NOT NULL,
+        "created_at" TEXT
     );""")
     con.commit()
     con.close()
@@ -74,7 +77,7 @@ async def on_message(message):
                             if api.verify_domain(config.network_name, split[3]) == 200:
                                 con = connect_db()
                                 cur = con.cursor()
-                                cur.execute("INSERT INTO `proxy` VALUES(?, ?, ?);", (split[3], split[4], message.author.id,))
+                                cur.execute("INSERT INTO `proxy` VALUES(?, ?, ?, ?);", (split[3], split[4], message.author.id, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%H"),))
                                 con.commit()
                                 con.close()
                                 await message.reply("성공적으로 등록되었습니다.")
@@ -158,7 +161,7 @@ async def on_message(message):
                     if api.create_backend(config.network_name, split[3], split[4], port, proxyprotocol) == 200:
                         con = connect_db()
                         cur = con.cursor()
-                        cur.execute("INSERT INTO `backend` VALUES(?, ?, ?, ?, ?);", (split[3], split[4], port, proxy_protocol_status, message.author.id,))
+                        cur.execute("INSERT INTO `backend` VALUES(?, ?, ?, ?, ?, ?);", (split[3], split[4], port, proxy_protocol_status, message.author.id, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%H"),))
                         con.commit()
                         con.close()
                         await message.reply("백엔드 서버가 성공적으로 생성되었습니다.")
