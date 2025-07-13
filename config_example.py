@@ -1,0 +1,9 @@
+api_key = "" # TCPShield API 키
+network_name = "" # TCPShield Network 이름
+bot_token = "" # 디스코드 봇 토큰
+bot_prefix = "" # 봇 명령어 접두사
+admin_discord_ids = [] # 관리자 디스코드 ID 목록
+maximum_domain_count = 1 # 일반 유저 도메인 등록 최대 한도
+maximum_domain_count_per_sponsor = 3 # 후원자(스폰서) 도메인 등록 최대 한도
+maximum_backend_count = 1 # 일반 유저 백엔드 서버 등록 최대 한도
+maximum_backend_count_per_sponsor = 3 # 후원자(스폰서) 백엔드 서버 등록 최대 한도
